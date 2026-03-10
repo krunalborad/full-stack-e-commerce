@@ -24,7 +24,7 @@ function Shop() {
 
   // Fetch products from backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("https://full-stack-e-commerce-gkn4.onrender.com/api/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
@@ -409,310 +409,279 @@ function Address({ cartItems, total, clearCart }) {
       <h3>Total: ₹{total}</h3>
 
       {/* ================= PAYMENT OPTIONS ================= */}
-      <h3>Payment Method</h3>
+<h3>Payment Method</h3>
 
-      <label>
-        <input
-          type="radio"
-          name="payment"
-          value="COD"
-          checked={paymentMethod === "COD"}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        />
-        Cash on Delivery
-      </label>
+<label>
+  <input
+    type="radio"
+    name="payment"
+    value="COD"
+    checked={paymentMethod === "COD"}
+    onChange={(e) => setPaymentMethod(e.target.value)}
+  />
+  Cash on Delivery
+</label>
 
-      <br />
+<br />
 
-      <label>
-        <input
-          type="radio"
-          name="payment"
-          value="CARD"
-          checked={paymentMethod === "CARD"}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        />
-        Card Payment
-      </label>
+<label>
+  <input
+    type="radio"
+    name="payment"
+    value="CARD"
+    checked={paymentMethod === "CARD"}
+    onChange={(e) => setPaymentMethod(e.target.value)}
+  />
+  Card Payment
+</label>
 
-      {paymentMethod === "CARD" && (
-        <p style={{ color: "green" }}>Card Selected</p>
-      )}
+{paymentMethod === "CARD" && (
+  <p style={{ color: "green" }}>Card Selected</p>
+)}
 
-      <br />
+<br />
 
-      <button
-        disabled={!isValid}
-        onClick={() => {
-          const orderData = {
-            cartItems,
-            address,
-            total,
-            paymentMethod,
-            paymentStatus: paymentMethod === "CARD" ? "PAID" : "PENDING",
-          };
+<button
+  disabled={!isValid}
+  onClick={() => {
+    const orderData = {
+      cartItems,
+      address,
+      total,
+      paymentMethod,
+      paymentStatus: paymentMethod === "CARD" ? "PAID" : "PENDING",
+    };
 
-          fetch("http://localhost:5000/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(orderData),
-          })
-            .then((res) => res.json())
-            .then(() => {
-              clearCart();
-              navigate("/success", { state: orderData });
-            })
-            .catch((err) => console.error("Error placing order:", err));
-        }}
-      >
-        Place Order
-      </button>
-
-      <button style={{ marginLeft: 10 }} onClick={() => navigate("/cart")}>
-        Back to Cart
-      </button>
-    </div>
-  );
-}
-
-import { useLocation } from "react-router-dom";
-
-function OrderSuccess() {
-  const { state } = useLocation();
-
-  if (!state) {
-    return <h3>No order data found</h3>;
-  }
-
-  const { cartItems, total, paymentMethod, paymentStatus, address } = state;
-
-  return (
-    <div style={{ padding: 40 }}>
-      <h2>✅ Order Placed Successfully</h2>
-
-      <h3>Order Summary</h3>
-      <p><b>Total:</b> ₹{total}</p>
-      <p><b>Payment Method:</b> {paymentMethod}</p>
-      <p><b>Payment Status:</b> {paymentStatus}</p>
-
-      <h3>Shipping Address</h3>
-      <p>{address.name}</p>
-      <p>{address.address}, {address.city}</p>
-      <p>{address.pincode}</p>
-
-      <h3>Items</h3>
-      {cartItems.map((item, i) => (
-        <p key={i}>
-          {item.name} × {item.quantity}
-        </p>
-      ))}
-
-      <Link to="/">
-        <button style={{ marginTop: 20 }}>Continue Shopping</button>
-      </Link>
-    </div>
-  );
-}
-
-function AdminOrders() {
-  const [orders, setOrders] = React.useState([]);
-
-  React.useEffect(() => {
-    fetch("http://localhost:5000/api/orders")
-      .then((res) => res.json())
-      .then((data) => setOrders(data))
-      .catch((err) => console.error(err));
-  }, []);
-
-  return (
-    <div style={{ padding: 40 }}>
-      <h2>📦 Admin Orders</h2>
-
-      {orders.length === 0 && <p>No orders found</p>}
-
-      {orders.map((order) => (
-        <div
-          key={order.id}
-          style={{
-            border: "1px solid #ccc",
-            padding: 16,
-            marginBottom: 12,
-          }}
-        >
-          <p><b>Order ID:</b> {order.id}</p>
-          <p><b>Total:</b> ₹{order.total}</p>
-          <p><b>Payment Method:</b> {order.paymentMethod}</p>
-          <p><b>Payment Status:</b> {order.paymentStatus}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-
-/* ===================== ADMIN PANEL ===================== */
-function AdminPanel() {
-  const [password, setPassword] = useState("");
-  const [authorized, setAuthorized] = useState(false);
-
-  const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
-
-  const [newProduct, setNewProduct] = useState({
-    name: "",
-    price: "",
-    image: "",
-  });
-
-  useEffect(() => {
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-
-    fetch("http://localhost:5000/api/orders")
-      .then((res) => res.json())
-      .then((data) => setOrders(data));
-  }, []);
-
-  const deleteOrder = (id) => {
-    fetch(`http://localhost:5000/api/orders/${id}`, {
-      method: "DELETE",
+    fetch("https://full-stack-e-commerce-gkn4.onrender.com/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
     })
       .then((res) => res.json())
       .then(() => {
-        setOrders((prev) => prev.filter((o) => o.id !== id));
-      });
-  };
+        clearCart();
+        navigate("/success", { state: orderData });
+      })
+      .catch((err) => console.error("Error placing order:", err));
+  }}
+>
+  Place Order
+</button>
 
-  const addProduct = () => {
-    if (!newProduct.name || !newProduct.price || !newProduct.image) {
-      alert("Fill all product fields");
-      return;
-    }
+<button style={{ marginLeft: 10 }} onClick={() => navigate("/cart")}>
+  Back to Cart
+</button>
+</div>
+);
+}
 
-    const product = {
-      id: Date.now(),
-      name: newProduct.name,
-      price: Number(newProduct.price),
-      image: newProduct.image,
-    };
+function OrderSuccess() {
+const { state } = useLocation();
 
-    setProducts((prev) => [...prev, product]);
-    setNewProduct({ name: "", price: "", image: "" });
-  };
+if (!state) {
+return <h3>No order data found</h3>;
+}
 
-  /* ================= ADMIN LOGIN ================= */
-  if (!authorized) {
-    return (
-      <div style={{ padding: 40 }}>
-        <h2>Admin Login</h2>
+const { cartItems, total, paymentMethod, paymentStatus, address } = state;
 
-        <input
-          type="password"
-          placeholder="Enter admin password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: 8 }}
-        />
+return (
+<div style={{ padding: 40 }}>
+<h2>✅ Order Placed Successfully</h2>
 
-        <br /><br />
+<h3>Order Summary</h3>
+<p><b>Total:</b> ₹{total}</p>
+<p><b>Payment Method:</b> {paymentMethod}</p>
+<p><b>Payment Status:</b> {paymentStatus}</p>
 
-        <button
-          onClick={() => {
-            if (password === "admin") {
-              setAuthorized(true);
-            } else {
-              alert("Wrong password");
-            }
-          }}
-        >
-          Login
-        </button>
-      </div>
-    );
-  }
+<h3>Shipping Address</h3>
+<p>{address.name}</p>
+<p>{address.address}, {address.city}</p>
+<p>{address.pincode}</p>
 
-  /* ================= ADMIN PANEL ================= */
-  return (
-    <div style={{ padding: 24 }}>
-      <h2>Admin Panel</h2>
+<h3>Items</h3>
+{cartItems.map((item, i) => (
+<p key={i}>
+{item.name} × {item.quantity}
+</p>
+))}
 
-      {/* ADD PRODUCT */}
-      <h3>Add Product</h3>
+<Link to="/">
+<button style={{ marginTop: 20 }}>Continue Shopping</button>
+</Link>
+</div>
+);
+}
 
-      <input
-        placeholder="Product Name"
-        value={newProduct.name}
-        onChange={(e) =>
-          setNewProduct({ ...newProduct, name: e.target.value })
-        }
-      />
-      <br />
+/* ===================== ADMIN PANEL ===================== */
 
-      <input
-        placeholder="Price"
-        value={newProduct.price}
-        onChange={(e) =>
-          setNewProduct({ ...newProduct, price: e.target.value })
-        }
-      />
-      <br />
+function AdminPanel() {
+const [password, setPassword] = useState("");
+const [authorized, setAuthorized] = useState(false);
 
-      <input
-        placeholder="Image path"
-        value={newProduct.image}
-        onChange={(e) =>
-          setNewProduct({ ...newProduct, image: e.target.value })
-        }
-      />
-      <br /><br />
+const [products, setProducts] = useState([]);
+const [orders, setOrders] = useState([]);
 
-      <button onClick={addProduct}>Add Product</button>
+const [newProduct, setNewProduct] = useState({
+name: "",
+price: "",
+image: "",
+});
 
-      <hr />
+useEffect(() => {
+fetch("https://full-stack-e-commerce-gkn4.onrender.com/api/products")
+.then((res) => res.json())
+.then((data) => setProducts(data));
 
-      {/* PRODUCTS LIST */}
-      <h3>Products</h3>
-      {products.map((p) => (
-        <p key={p.id}>
-          {p.id}. {p.name} – ₹{p.price}
-        </p>
-      ))}
+fetch("https://full-stack-e-commerce-gkn4.onrender.com/api/orders")
+.then((res) => res.json())
+.then((data) => setOrders(data));
+}, []);
 
-      <hr />
+const deleteOrder = (id) => {
+fetch(`https://full-stack-e-commerce-gkn4.onrender.com/api/orders/${id}`, {
+method: "DELETE",
+})
+.then((res) => res.json())
+.then(() => {
+setOrders((prev) => prev.filter((o) => o.id !== id));
+});
+};
 
-      {/* ORDERS */}
-      <h3>Orders</h3>
-      {orders.length === 0 && <p>No orders yet</p>}
+const addProduct = () => {
+if (!newProduct.name || !newProduct.price || !newProduct.image) {
+alert("Fill all product fields");
+return;
+}
 
-      {orders.map((o) => (
-        <div
-          key={o.id}
-          style={{
-            marginBottom: 12,
-            border: "1px solid #ccc",
-            padding: 10,
-          }}
-        >
-          <p><b>Order #{o.id}</b></p>
-          <p>Total: ₹{o.total}</p>
+const product = {
+id: Date.now(),
+name: newProduct.name,
+price: Number(newProduct.price),
+image: newProduct.image,
+};
 
-          {/* ✅ FINAL FIX */}
-          <p>
-            Payment Method:{" "}
-            <b>{o.paymentMethod ? o.paymentMethod : "COD"}</b>
-          </p>
+setProducts((prev) => [...prev, product]);
+setNewProduct({ name: "", price: "", image: "" });
+};
 
-          <p>
-            Payment Status:{" "}
-            <b>{o.paymentStatus ? o.paymentStatus : "PENDING"}</b>
-          </p>
+/* ================= ADMIN LOGIN ================= */
 
-          <button onClick={() => deleteOrder(o.id)}>
-            Delete Order
-          </button>
-        </div>
-      ))}
-    </div>
-  );
+if (!authorized) {
+return (
+<div style={{ padding: 40 }}>
+<h2>Admin Login</h2>
+
+<input
+type="password"
+placeholder="Enter admin password"
+value={password}
+onChange={(e) => setPassword(e.target.value)}
+style={{ padding: 8 }}
+/>
+
+<br /><br />
+
+<button
+onClick={() => {
+if (password === "admin") {
+setAuthorized(true);
+} else {
+alert("Wrong password");
+}
+}}
+>
+Login
+</button>
+</div>
+);
+}
+
+/* ================= ADMIN PANEL ================= */
+
+return (
+<div style={{ padding: 24 }}>
+<h2>Admin Panel</h2>
+
+<h3>Add Product</h3>
+
+<input
+placeholder="Product Name"
+value={newProduct.name}
+onChange={(e) =>
+setNewProduct({ ...newProduct, name: e.target.value })
+}
+/>
+
+<br />
+
+<input
+placeholder="Price"
+value={newProduct.price}
+onChange={(e) =>
+setNewProduct({ ...newProduct, price: e.target.value })
+}
+/>
+
+<br />
+
+<input
+placeholder="Image path"
+value={newProduct.image}
+onChange={(e) =>
+setNewProduct({ ...newProduct, image: e.target.value })
+}
+/>
+
+<br /><br />
+
+<button onClick={addProduct}>Add Product</button>
+
+<hr />
+
+<h3>Products</h3>
+
+{products.map((p) => (
+<p key={p.id}>
+{p.id}. {p.name} – ₹{p.price}
+</p>
+))}
+
+<hr />
+
+<h3>Orders</h3>
+
+{orders.length === 0 && <p>No orders yet</p>}
+
+{orders.map((o) => (
+<div
+key={o.id}
+style={{
+marginBottom: 12,
+border: "1px solid #ccc",
+padding: 10,
+}}
+>
+<p><b>Order #{o.id}</b></p>
+
+<p>Total: ₹{o.total}</p>
+
+<p>
+Payment Method:
+<b>{o.paymentMethod ? o.paymentMethod : "COD"}</b>
+</p>
+
+<p>
+Payment Status:
+<b>{o.paymentStatus ? o.paymentStatus : "PENDING"}</b>
+</p>
+
+<button onClick={() => deleteOrder(o.id)}>
+Delete Order
+</button>
+
+</div>
+))}
+
+</div>
+);
 }
